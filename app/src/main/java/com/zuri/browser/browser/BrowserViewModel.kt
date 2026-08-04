@@ -30,6 +30,9 @@ class BrowserViewModel(application: Application) : AndroidViewModel(application)
     private val _state = MutableStateFlow(BrowserState())
     val state: StateFlow<BrowserState> = _state.asStateFlow()
 
+    /** Last URL asked to load, used to recover from a content-process crash. */
+    private var lastRequestedUrl: String? = null
+
     val session: GeckoSession = GeckoSession().apply {
         open(GeckoEngine.requireRuntime())
     }
@@ -72,10 +75,29 @@ class BrowserViewModel(application: Application) : AndroidViewModel(application)
             override fun onTitleChange(session: GeckoSession, title: String?) {
                 _state.update { it.copy(pageTitle = title ?: "") }
             }
+
+            // If the Gecko content process dies, recover by reloading rather
+            // than letting the tab stay blank.
+            override fun onCrash(session: GeckoSession) {
+                recover()
+            }
+
+            override fun onKill(session: GeckoSession) {
+                recover()
+            }
         }
     }
 
-    fun loadUrl(input: String) = session.loadUri(normalizeToUri(input))
+    private fun recover() {
+        val url = lastRequestedUrl
+        if (url != null) session.loadUri(url)
+    }
+
+    fun loadUrl(input: String) {
+        val uri = normalizeToUri(input)
+        lastRequestedUrl = uri
+        session.loadUri(uri)
+    }
 
     fun reload() = session.reload()
 

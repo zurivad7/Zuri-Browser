@@ -12,10 +12,27 @@ android {
         applicationId = "com.zuri.browser"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0-m1"
+        versionCode = 2
+        versionName = "0.1.1-m1"
 
         vectorDrawables { useSupportLibrary = true }
+
+        // GeckoView ships native libraries per CPU architecture. Only keep the
+        // ABIs real phones use (drop x86/x86_64 emulator builds) to cut size.
+        ndk {
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+        }
+    }
+
+    // Produce one APK per ABI instead of a single universal APK bundling every
+    // architecture. This is the main reason the first build was ~548 MB.
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("arm64-v8a", "armeabi-v7a")
+            isUniversalApk = false
+        }
     }
 
     buildTypes {
@@ -49,6 +66,13 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+        jniLibs {
+            // GeckoView loads its own native libs (libxul, etc.) at runtime and
+            // requires them to be extractable. Without this the engine renders a
+            // blank page and the content process crashes on navigation. Legacy
+            // (compressed) packaging also keeps the on-disk APK smaller.
+            useLegacyPackaging = true
         }
     }
 }
