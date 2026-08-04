@@ -16,16 +16,12 @@ android {
         versionName = "0.1.1-m1"
 
         vectorDrawables { useSupportLibrary = true }
-
-        // GeckoView ships native libraries per CPU architecture. Only keep the
-        // ABIs real phones use (drop x86/x86_64 emulator builds) to cut size.
-        ndk {
-            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
-        }
     }
 
-    // Produce one APK per ABI instead of a single universal APK bundling every
-    // architecture. This is the main reason the first build was ~548 MB.
+    // GeckoView ships native libraries per CPU architecture. Produce one APK per
+    // ABI (arm64-v8a, armeabi-v7a) instead of a single universal APK bundling
+    // every architecture — the main reason the first build was ~548 MB. x86/
+    // x86_64 (emulator) ABIs are intentionally dropped.
     splits {
         abi {
             isEnable = true
