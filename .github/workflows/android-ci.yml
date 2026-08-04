@@ -44,9 +44,24 @@ jobs:
       - name: Build debug APK
         run: ./gradlew assembleDebug --stacktrace
 
-      - name: Upload debug APK
+      - name: List APK sizes
+        run: |
+          echo "=== per-ABI debug APKs ==="
+          ls -la app/build/outputs/apk/debug/
+          du -h app/build/outputs/apk/debug/*.apk
+
+      # Most phones (incl. Samsung Galaxy S24 Ultra) are arm64-v8a — upload it
+      # on its own so it can be installed directly without picking from a zip.
+      - name: Upload arm64-v8a APK
         uses: actions/upload-artifact@v4
         with:
-          name: zuri-browser-debug
-          path: app/build/outputs/apk/debug/*.apk
+          name: zuri-browser-arm64-v8a
+          path: app/build/outputs/apk/debug/*arm64-v8a*.apk
+          if-no-files-found: error
+
+      - name: Upload armeabi-v7a APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: zuri-browser-armeabi-v7a
+          path: app/build/outputs/apk/debug/*armeabi-v7a*.apk
           if-no-files-found: error
