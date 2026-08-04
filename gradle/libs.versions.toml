@@ -1,14 +1,15 @@
 [versions]
-agp = "8.7.3"
+agp = "8.11.1"
 kotlin = "2.1.0"
 coreKtx = "1.15.0"
 lifecycle = "2.8.7"
 activityCompose = "1.9.3"
 composeBom = "2024.12.01"
 datastore = "1.1.1"
-# GeckoView stable. If CI fails to resolve this exact build, the "Print GeckoView
-# versions" CI step lists the currently published timestamps — bump to match.
-geckoview = "133.0.20241118"
+# GeckoView stable (latest release channel). If CI fails to resolve this exact
+# build, the "Print GeckoView versions" CI step lists the currently published
+# timestamps — bump to match.
+geckoview = "153.0.20260730155536"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.zuri.browser"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.zuri.browser"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "0.1.0-m1"
 
