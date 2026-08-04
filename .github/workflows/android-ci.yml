@@ -19,12 +19,18 @@ jobs:
           java-version: '17'
 
       # Ground truth for the pinned GeckoView version. If assembleDebug fails to
-      # resolve org.mozilla.geckoview:geckoview, read the latest timestamps here
-      # and bump `geckoview` in gradle/libs.versions.toml.
+      # resolve org.mozilla.geckoview:geckoview, read <latest>/<release> here and
+      # bump `geckoview` in gradle/libs.versions.toml.
       - name: Print available GeckoView versions
         run: |
-          curl -s https://maven.mozilla.org/maven2/org/mozilla/geckoview/geckoview/maven-metadata.xml \
-            | grep -oE '<version>[^<]+</version>' | tail -20 || true
+          URL=https://maven.mozilla.org/maven2/org/mozilla/geckoview/geckoview/maven-metadata.xml
+          echo "HTTP status:"
+          curl -sSL -o meta.xml -w '%{http_code}\n' "$URL" || echo "curl failed"
+          echo "=== raw maven-metadata.xml ==="
+          cat meta.xml || true
+          echo "=== latest / release / newest versions ==="
+          grep -oE '<(latest|release)>[^<]+</(latest|release)>' meta.xml || true
+          grep -oE '<version>[^<]+</version>' meta.xml | tail -20 || true
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
