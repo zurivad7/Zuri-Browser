@@ -33,5 +33,14 @@
                 <data android:scheme="https" />
             </intent-filter>
         </activity>
+
+        <!-- Runs in its own process so it can show a crash report after the main
+             process dies from an uncaught exception. -->
+        <activity
+            android:name=".CrashActivity"
+            android:exported="false"
+            android:process=":crash"
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true" />
     </application>
 </manifest>
